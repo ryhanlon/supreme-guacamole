@@ -6,14 +6,12 @@
     <meta charset="UTF-8">
         <!--  Custom CSS -->
     <link rel="stylesheet" type="text/css" href="static/css/site.css">
-      <title>Title</title>
-            <style>
-           #map {
-            height: 400px;
-            width: 100%;
-           }
-        </style>
 
+         <!--jQuery UI css-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+
+      <title>Bus Stop Finder</title>
 
 </head>
 
@@ -21,16 +19,46 @@
 
     </header>
 
-
-
         <body>
-            <h3>My Google Maps Demo</h3>
+            <section class="mapContainer">
+            <h3 class="text">Bus Stop Finder</h3>
+                <br>
             <div id="map"></div>
+            </section>
+
+            <!--slider-->
+
+            <div id="slider">
+                 <div id="custom-handle" class="ui-slider-handle"></div>
+            </div>
+
+            <!--table-->
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Location ID</th>
+                  <th>Heading</th>
+                  <th>Location</th>
+                </tr>
+              </thead>
+              <tbody id="busses">
+                <tr>
+                  <!--<th scope="row"></th>-->
+                  <!--<td>99</td>-->
+                  <!--<td>42</td>-->
+                  <!--<td>@SW Corbert</td>-->
+                </tr>
+                <tr>
+
+                </tr>
+              </tbody>
+            </table>
 
 
 
-
-
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <!--  JQuery -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
@@ -40,7 +68,8 @@
 
     <!--  Custom JS -->
     <script src="static/js/site.js"></script>
-                        <!-- google map -->
+
+    <!-- google map -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSnLk4RNY_ywshkjOahvFIyvLzjW07Vbo&callback=nav"></script>
     </body>
 

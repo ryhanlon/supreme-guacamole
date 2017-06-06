@@ -1,0 +1,33 @@
+.mapContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+
+.text {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+
+}
+
+#map {
+     display: flex;
+     flex-direction: column;
+     align-self: center;
+     height: 400px;
+     width: 80%;
+ }
+
+/*  ----slider---- */
+
+#custom-handle {
+    width: 3em;
+    height: 1.6em;
+    top: 50%;
+    margin-top: -.8em;
+    text-align: center;
+    line-height: 1.6em;
+  }
