@@ -4,11 +4,12 @@
 
 <head>
     <meta charset="UTF-8">
-        <!--  Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="static/css/site.css">
 
          <!--jQuery UI css-->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+            <!--  Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="static/css/site.css">
 
       <title>Bus Stop Finder</title>
 
@@ -19,22 +20,28 @@
     </header>
 
         <body>
+
+        <main id="bodyContainer">
             <section class="mapContainer">
-            <h3 class="text">Bus Stop Finder</h3>
-                <br>
-            <div id="map"></div>
+                <h1 class="title">Bus Stop Finder</h1>
+                    <br>
+                <div id="map"></div>
             </section>
 
-            <!--slider-->
-
+            <section class="slider"></section>
+            <!--slider instructions-->
             <p>
-            <label for="amount">Slide to find the nearest Bus Stop (meters).</label>
-             <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            <label for="instructions"><h4>Slide to find more bus stops.</h4></label>
+             <input type="text" id="instructions" readonly style="border:0; color:#f6931f; font-weight:bold;">
             </p>
 
+            <!--the slider-->
             <div id="slider">
                  <div id="custom-handle" class="ui-slider-handle"></div>
             </div>
+            </section>
+
+        <hr>
 
             <!--table-->
             <table class="table">
@@ -58,6 +65,8 @@
                 </tr>
               </tbody>
             </table>
+
+        </main>
 
 
 

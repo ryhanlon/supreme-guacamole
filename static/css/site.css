@@ -1,3 +1,12 @@
+#bodyContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+}
+
+
+
 .mapContainer {
     display: flex;
     flex-direction: column;
@@ -6,7 +15,7 @@
 }
 
 
-.text {
+.title {
     display: flex;
     flex-direction: column;
     align-self: center;
@@ -17,17 +26,38 @@
      display: flex;
      flex-direction: column;
      align-self: center;
-     height: 400px;
-     width: 80%;
+     height: 500px;
+     width: 90%;
  }
+
+
+/*instruction for slider*/
+instructions {
+    display: flex;
+
+
+}
 
 /*  ----slider---- */
 
 #custom-handle {
-    width: 3em;
+    width: 4em;
     height: 1.6em;
     top: 50%;
     margin-top: -.8em;
     text-align: center;
     line-height: 1.6em;
   }
+
+ #slider{
+     width: 90%;
+     margin: 5px auto;
+
+}
+
+
+/* ----table---- */
+.table {
+
+
+}

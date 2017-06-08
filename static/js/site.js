@@ -7,9 +7,11 @@
 
 
 let map;
+let stopMarkers = new Array();
 
 
 function addStopToTable(index, bus) {
+    // Make table for bus stop information
 
     // prototype for table
     //  <tr>
@@ -29,57 +31,43 @@ function addStopToTable(index, bus) {
     $('#busses').append(busStopRow);
 }
 
+function makeInFoWindow(busStop){
+    // Generates and adds inforwindow HTML to Google map marker objects.
 
-function addBus(bus) {
+    let $description = $('<p>').text(`${busStop.desc}`);
+    let $heading = $('<h4>').text(`${busStop.locid} -> ${busStop.dir}`);
+    let $body = $('<section>').append($heading, $description);
+
+    let $content = $('<main>').append($body, $heading, $description);
+
+    return $content.html();
+}
+
+function addBus(busStop) {
     // add the bus icon and locate on the map
 
     let $iconBus = "static/img/bus-4.png";
 
-    let marker = new google.maps.Marker({
-        position: bus,
+    let busStopLoc = new google.maps.LatLng(busStop.lat, busStop.lng);
+    let busMarker = new google.maps.Marker({
+        position: busStopLoc,
+        title: busStop.desc,
         icon: $iconBus
     });
 
-    let busStopLoc = new google.maps.LatLng(bus.lat, bus.lng);
-    let Marker = new google.maps.Marker({
-        position: busStopLoc,
-        title: bus.desc
-    });
+    let contentString = makeInFoWindow(busStop);
 
-    marker.setMap(map);
-
-    // Add the info window
-
-    var contentString = '<div id="content">' +
-        '<div id="siteNotice">' +
-        '</div>' +
-        '<h1 id="firstHeading" class="firstHeading">Uluru</h1>' +
-        '<div id="bodyContent">' +
-        '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-        'sandstone rock formation in the southern part of the ' +
-        'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) ' +
-        'south west of the nearest large town, Alice Springs; 450&#160;km ' +
-        '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major ' +
-        'features of the Uluru - Kata Tjuta National Park. Uluru is ' +
-        'sacred to the Pitjantjatjara and Yankunytjatjara, the ' +
-        'Aboriginal people of the area. It has many springs, waterholes, ' +
-        'rock caves and ancient paintings. Uluru is listed as a World ' +
-        'Heritage Site.</p>' +
-        '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">' +
-        'https://en.wikipedia.org/w/index.php?title=Uluru</a> ' +
-        '(last visited June 22, 2009).</p>' +
-        '</div>' +
-        '</div>';
-
-    let infowindow = new google.maps.InfoWindow({
+    let infoWindow = new google.maps.InfoWindow({
         content: contentString
     });
 
-    marker.addListener('click', function () {
-        infowindow.open(map, marker);
+    busMarker.addListener('click', function () {
+        infoWindow.open(map, busMarker);
     });
-}
 
+    stopMarkers.push(busMarker);   // Push this busMarker to the stopMarker array
+    busMarker.setMap(map);     // To add the marker to the map, call setMap()
+}
 
 
 
@@ -90,18 +78,47 @@ function addMarkers(busses) {
     $.each(busses, function(index, bus){
         console.log(bus);
 
-        addStopToTable(index, bus);
-        addBus(bus);
+        addStopToTable(index, bus);  // Add stops to table.
+        addBus(bus);                // Add buses to map.
+
     });
 }
 
 
-function dataCall(position, meters) {
+function fetchArrivals(locID) {
+    "use strict";
+     // Requests the arrival times from TriMet: position, radius, appID, json
+    let = data;
+
+    let arriveParms = {'appID':'C04DA9067D94543B28DB02D54',
+                     'locIDs': locID,
+                     'json':'true',
+                      'arrivals': '2'};
+
+    $.ajax({
+     url: 'https://developer.trimet.org/ws/v2/arrivals',
+     method: 'GET',
+     data: arriveParms,
+     success: function(rsp){
+         console.log(rsp);
+         let times = rsp.resultSet.arrival;
+         // addMarkers(times);
+     },
+     error: function(error){
+         console.log(error);
+     }
+  });
+}
+
+
+
+
+function fetchStops(position, meters) {
     "use strict";
      // Requests the data from TriMet: position, radius, appID, json
 
     if (typeof meters === 'undefined') {
-        var meters = '100';
+        let meters = '100';
     }
 
     let lat = position.coords.latitude;
@@ -111,7 +128,7 @@ function dataCall(position, meters) {
                      'appID':'C04DA9067D94543B28DB02D54',
                      'json':'true'};
 
-  $.ajax({
+    $.ajax({
      url: 'https://developer.trimet.org/ws/V1/stops',
      method: 'GET',
      data: dataPairs,
@@ -124,7 +141,44 @@ function dataCall(position, meters) {
          console.log(error);
      }
   });
+}
 
+
+
+function setMapOnAll(map) {
+    // Sets the map on all markers in the array.
+    $.each(stopMarkers, function(index, stopMarker){
+        stopMarker.setMap(map);
+        });
+
+    // for (var i = 0; i < markers.length; i++) {
+    //   markers[i].setMap(map);
+    //     }
+}
+
+
+function clearMarkers() {
+    // Removes the markers from the map, but keeps them in the array.
+    setMapOnAll(null);
+}
+
+
+function showMarkers() {
+    // Shows any markers currently in the array.
+    setMapOnAll(map);
+}
+
+
+function deleteMarkers() {
+    // Deletes all markers in the array by removing references to them.
+    clearMarkers();
+    stopMarkers = [];
+}
+
+
+function clearTable() {
+    // Clears all of the records from the table.
+    $('#busses').empty();
 }
 
 
@@ -146,7 +200,9 @@ $(function () {
         },
         stop: function (event, ui) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                dataCall(position, ui.value);
+                clearTable();
+                clearMarkers();
+                fetchStops(position, ui.value);
             });
         }
     }); // Ends Slider
@@ -164,7 +220,7 @@ function initMap(position) {
               mapTypeId: 'satellite'
           });
 
-    let marker = new google.maps.Marker({
+    let busMarker = new google.maps.Marker({
       position: here,
       map: map
     });
@@ -175,7 +231,7 @@ function nav() {
     // gets the current position using latitude and longitude
 
     navigator.geolocation.getCurrentPosition(function(position) {
-        dataCall(position);
-        initMap(position);
+        fetchStops(position);  // calls the ajax function to get the data
+        initMap(position);  // calls the initMap function show current position
     });
 }
