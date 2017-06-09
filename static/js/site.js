@@ -5,7 +5,7 @@
 
 "use strict";
 
-
+let busArrival;
 let map;
 let stopMarkers = new Array();
 
@@ -32,7 +32,8 @@ function addStopToTable(index, bus) {
 }
 
 function makeInFoWindow(busStop){
-    // Generates and adds inforwindow HTML to Google map marker objects.
+    // Generates and adds infowindow HTML to Google map marker objects.
+
 
     let $description = $('<p>').text(`${busStop.desc}`);
     let $heading = $('<h4>').text(`${busStop.locid} -> ${busStop.dir}`);
@@ -42,6 +43,7 @@ function makeInFoWindow(busStop){
 
     return $content.html();
 }
+
 
 function addBus(busStop) {
     // add the bus icon and locate on the map
@@ -76,7 +78,7 @@ function addMarkers(busses) {
     // adding bus locations and icons
 
     $.each(busses, function(index, bus){
-        console.log(bus);
+        // console.log(bus);
 
         addStopToTable(index, bus);  // Add stops to table.
         addBus(bus);                // Add buses to map.
@@ -85,31 +87,30 @@ function addMarkers(busses) {
 }
 
 
-function fetchArrivals(locID) {
-    "use strict";
+function fetchArrivals(locid) {
      // Requests the arrival times from TriMet: position, radius, appID, json
-    let = data;
+    // let = arrivalTimes;
+    let data;
 
     let arriveParms = {'appID':'C04DA9067D94543B28DB02D54',
-                     'locIDs': locID,
+                     'locIDs': busArrival,
                      'json':'true',
                       'arrivals': '2'};
 
     $.ajax({
-     url: 'https://developer.trimet.org/ws/v2/arrivals',
+     url: 'https://developer.trimet.org/ws/v1/arrivals',
      method: 'GET',
      data: arriveParms,
      success: function(rsp){
          console.log(rsp);
-         let times = rsp.resultSet.arrival;
-         // addMarkers(times);
+         let arrivalTimes = rsp.resultSet.arrival;
+         addMarkers(arrivalTimes);
      },
      error: function(error){
          console.log(error);
      }
   });
 }
-
 
 
 
@@ -120,7 +121,7 @@ function fetchStops(position, meters) {
     if (typeof meters === 'undefined') {
         let meters = '100';
     }
-
+    let data;
     let lat = position.coords.latitude;
     let long = position.coords.longitude;
     let dataPairs = {'ll':`${lat}, ${long}`,
@@ -136,6 +137,8 @@ function fetchStops(position, meters) {
          console.log(rsp);
          let busses = rsp.resultSet.location;
          addMarkers(busses);
+         fetchArrivals(busses.locid);
+         console.log(fetchArrivals);
      },
      error: function(error){
          console.log(error);
@@ -190,7 +193,7 @@ $(function () {
     $("#slider").slider({
         value: 100,
         min: 0,
-        max: 1000,
+        max: 1500,
         step: 25,
         create: function () {
             handle.text($(this).slider("value"));
@@ -231,7 +234,9 @@ function nav() {
     // gets the current position using latitude and longitude
 
     navigator.geolocation.getCurrentPosition(function(position) {
+
         fetchStops(position);  // calls the ajax function to get the data
+
         initMap(position);  // calls the initMap function show current position
     });
 }
